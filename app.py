@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template_string
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -19,8 +19,8 @@ class Article(db.Model):
     def __repr__(self):
         return f'<Article {self.title}>'
 
-with app.app_context():
-    db.create_all()
+with app.app_context(): # Crear el contexto de la aplicación para ejecutar operaciones relacionadas con la base de datos
+    db.create_all() # Crear las tablas en la base de datos según los modelos definidos (en este caso, la tabla 'Article')
 
 
 
@@ -30,6 +30,23 @@ with app.app_context():
 @app.route('/')# Decorador para definir la ruta de la página de inicio
 def home():
     return 'Hola, Flask!'
+
+@app.route('/articles')
+def list_article():
+    articlues = Article.query.all()
+    html= '''
+    
+    <h1>Lista de Artículos</h1>
+    <ul>
+        {% for article in articles %}
+            <li>{{article.title}}</li>
+        {% endfor %}
+    </ul>
+    
+    '''
+    
+    return render_template_string(html, articles=articlues)
+    
 
 
 
@@ -63,7 +80,8 @@ def create_article():
 
 @app.route('/article/<int:article_id>')
 def view_article(article_id):
-    return f'Estas viendo el articulo con ID: {article_id}'
+    article = Article.query.get_or_404(article_id)
+    return f'Articulo: {article.title}, Contenido: {article.content}'
 
 
 
