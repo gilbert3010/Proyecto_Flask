@@ -40,7 +40,7 @@ def get_articles():
         'content': article.content
     } for article in articles]) # Devolver una respuesta JSON con la lista de artículos
 
-
+# Decorador para definir la ruta y el método HTTP para crear un nuevo artículo
 @app.route('/create-article', methods=['POST'])
 def create_article():
     data = request.get_json()
@@ -54,6 +54,7 @@ def create_article():
         'content': new_article.content
     }), 201 # Devolver una respuesta JSON con los detalles del nuevo artículo y un código de estado 201 (Creado)
 
+# Decorador para definir la ruta y el método HTTP para actualizar un artículo existente
 @app.route('/article/<int:id>', methods=['PUT'])
 def update_article(id):
     article = Article.query.get_or_404(id)
@@ -68,9 +69,19 @@ def update_article(id):
         'content': article.content
     })
 
+@app.route('/article/<int:id>', methods=['DELETE'])# Decorador para definir la ruta y el método HTTP para eliminar un artículo
+def delete_article(id):
+    article = Article.query.get_or_404(id)
+    db.session.delete(article)
+    db.session.commit()
+    
+    return jsonify({
+        'message': f'Articulo {id} eliminado con exito'
+    })
 
 
 
+# Decorador para definir la ruta y el método HTTP para obtener los detalles de un artículo específico
 @app.route('/article/<int:article_id>')
 def view_article(article_id):
     article = Article.query.get_or_404(article_id)
