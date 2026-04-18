@@ -54,10 +54,31 @@ def create_article():
         'content': new_article.content
     }), 201 # Devolver una respuesta JSON con los detalles del nuevo artículo y un código de estado 201 (Creado)
 
+@app.route('/article/<int:id>', methods=['PUT'])
+def update_article(id):
+    article = Article.query.get_or_404(id)
+    data = request.get_json()
+    article.title = data['title']
+    article.content = data['content']
+    db.session.commit()
+    
+    return jsonify({
+        'id': article.id,
+        'title': article.title,
+        'content': article.content
+    })
+
+
+
+
 @app.route('/article/<int:article_id>')
 def view_article(article_id):
     article = Article.query.get_or_404(article_id)
-    return f'Articulo: {article.title}, Contenido: {article.content}'
+    return jsonify({
+        'id': article.id,
+        'title': article.title,
+        'content': article.content
+    })
 
 
 
