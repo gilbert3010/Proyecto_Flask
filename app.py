@@ -57,7 +57,7 @@ def update_article(id):
         'content': article.content
     })
 
-@app.route('/article/<int:id>', methods=['DELETE'])# Decorador para definir la ruta y el método HTTP para eliminar un artículo
+@app.route('/delete-article/<int:id>', methods=['DELETE'])# Decorador para definir la ruta y el método HTTP para eliminar un artículo
 def delete_article(id):
     article = Article.query.get_or_404(id)
     db.session.delete(article)
