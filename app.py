@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -31,24 +31,14 @@ with app.app_context(): # Crear el contexto de la aplicación para ejecutar oper
 def home():
     return 'Hola, Flask!'
 
-@app.route('/articles')
-def list_article():
-    articlues = Article.query.all()
-    html= '''
-    
-    <h1>Lista de Artículos</h1>
-    <ul>
-        {% for article in articles %}
-            <li>{{article.title}}</li>
-        {% endfor %}
-    </ul>
-    
-    '''
-    
-    return render_template_string(html, articles=articlues)
-    
-
-
+@app.route('/articles', methos=['GET'])
+def get_articles():
+    articles = Article.query.all() # Obtener todos los artículos de la base de datos
+    return jsonify([{
+        'id': article.id,
+        'title': article.title,
+        'content': article.content
+    } for article in articles]) # Devolver una respuesta JSON con la lista de artículos
 
 @app.route('/create-article', methods=['GET', 'POST'])
 def create_article():
