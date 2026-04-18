@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from models.user import User, db
 from models.article import Article, db
 
 
@@ -18,6 +19,28 @@ with app.app_context(): # Crear el contexto de la aplicación para ejecutar oper
 @app.route('/')# Decorador para definir la ruta de la página de inicio
 def home():
     return 'Hola, Flask!'
+
+@app.route('/register', methods=['POST']) # Decorador para definir la ruta y el método HTTP para registrar un nuevo usuario
+def register():
+    data = request.get_json() # Obtener los datos JSON enviados en la solicitud
+    if User.query.filter_by(email=data['email']).first is not None:
+        return jsonify({'message': 'El correo electrónico ya está registrado'}), 400 # Devolver un mensaje de error si el correo electrónico ya está registrado
+
+    new_user = User(username=data['username'], email=data['email'])
+    new_user.set_password(data['password'])# Establecer la contraseña del nuevo usuario utilizando el método set_password
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return jsonify({
+        'message': f'Usuario {new_user.username}registrado correctamente',
+        "id": new_user.id,
+        "username": new_user.username,
+        "email": new_user.email
+    })
+    
+
+
+
 
 @app.route('/articles', methods=['GET'])
 def get_articles():
