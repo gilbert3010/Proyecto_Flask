@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from models.article import Article, db
 
 
 app = Flask(__name__) # Crear una instancia de Flask
@@ -9,29 +9,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db' # Configurar la URI 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Desactivar el seguimiento de modificaciones de objetos para mejorar el rendimiento
 
 
-
-db = SQLAlchemy(app) # crear una instancia de SQLAlchemy y pasarle la aplicación Flask
-class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    
-    def __repr__(self):
-        return f'<Article {self.title}>'
+db.init_app(app)# Inicializar la extensión SQLAlchemy con la aplicación Flask
 
 with app.app_context(): # Crear el contexto de la aplicación para ejecutar operaciones relacionadas con la base de datos
     db.create_all() # Crear las tablas en la base de datos según los modelos definidos (en este caso, la tabla 'Article')
-
-
-
-
 
 
 @app.route('/')# Decorador para definir la ruta de la página de inicio
 def home():
     return 'Hola, Flask!'
 
-@app.route('/articles', methos=['GET'])
+@app.route('/articles', methods=['GET'])
 def get_articles():
     articles = Article.query.all() # Obtener todos los artículos de la base de datos
     return jsonify([{
@@ -80,7 +68,6 @@ def delete_article(id):
     })
 
 
-
 # Decorador para definir la ruta y el método HTTP para obtener los detalles de un artículo específico
 @app.route('/article/<int:article_id>')
 def view_article(article_id):
@@ -90,16 +77,6 @@ def view_article(article_id):
         'title': article.title,
         'content': article.content
     })
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
