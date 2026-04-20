@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db= SQLAlchemy() # crear una instancia de SQLAlchemy y pasarle la aplicación Flask
 
-class User(db.Model):
+class User(db.Model): # Definir el modelo de usuario con los campos id, username, email y password_hash
     id = db.Column(db.Integer, primary_key=True )
     username = db.Column(db.String(50), nullabel=False, unique=True)
     email = db.Column(db.String(120), nullabel=False, unique=True)
