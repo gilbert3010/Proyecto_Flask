@@ -1,11 +1,10 @@
 from flask import Flask, request, jsonify
-from models.article import Article
-from models.user import User
+from flask_cors import CORS
 from models import db
-
 
 app = Flask(__name__) # Crear una instancia de Flask
 
+CORS(app) # Habilitar CORS para permitir solicitudes desde diferentes dominios
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db' # Configurar la URI de la base de datos (en este caso, SQLite)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Desactivar el seguimiento de modificaciones de objetos para mejorar el rendimiento
@@ -14,6 +13,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Desactivar el seguimiento
 db.init_app(app)# Inicializar la extensión SQLAlchemy con la aplicación Flask
 
 with app.app_context(): # Crear el contexto de la aplicación para ejecutar operaciones relacionadas con la base de datos
+    # Importar modelos después de inicializar db para que se registren correctamente
+    from models.article import Article
+    from models.user import User
     db.create_all() # Crear las tablas en la base de datos según los modelos definidos (en este caso, la tabla 'Article')
 
 
