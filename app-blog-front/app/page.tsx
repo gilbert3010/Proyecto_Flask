@@ -52,9 +52,9 @@ export default function Home() {
                   <div key={article.id} className="bg-white rounded-lg shadow-md p-6">
                     <h2 className="text-2xl font-semibold mb-4 text-gray-800">{article.title}</h2>
                     <p className="text-gray-600 mb-4">{article.content.slice(0, 100)}...</p>
-                    <a href={`/article/${article.id}`} className="text-indigo-600 hover:text-indigo-800 font-medium">
+                    <link href={`/article/${article.id}`} className="text-indigo-600 hover:text-indigo-800 font-medium">
                       Leer más →
-                    </a>
+                    </link>
                   </div>
                 ))}
               </div>
